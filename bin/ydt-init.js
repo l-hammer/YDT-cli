@@ -1,16 +1,15 @@
-
+const path = require('path');
+const program = require('commander')
 const logger = require('../lib/logger')
 const download = require('download-git-repo')
 const inquirer = require('inquirer')
-
-// download('l-hammer/YDTemplate', 'test/tmp', (err) => {
-//   err ? logger.error(error) : logger.success('success');
-// })
+const fs = require('fs')
+const ini = require('ini')
 
 const prompts = [
   {
     type: "string",
-    name: "YDTemplate",
+    name: "name",
     message: "Project name",
     default: "YDTemplate"
   },
@@ -47,15 +46,47 @@ const prompts = [
   },
 ]
 
+const template = 'l-hammer/YDTemplate'
 const projectName = program.args[0]
 const tmp = './' + projectName
+const to = path.resolve(projectName)
 
 module.exports = () => {
   inquirer.prompt(prompts).then((answers) => {
-    console.log(answers)
-
-    download('l-hammer/YDTemplate', tmp, (err) => {
-      err ? logger.error(error) : logger.success('success');
-    })
+    if (fs.existsSync(to)) {
+      generate(tmp, answers);
+    } else {
+      download(template, tmp, (err) => {
+        if (err) logger.error('Failed to download repo ' + template + ': ' + err)
+        generate(tmp, answers);
+      })
+    }
   })
+}
+
+function generate(src, answers) {
+  initPackage(src)
+  initConfig(src)
+}
+
+function initPackage (dir, answers) {
+  const file = path.join(dir, 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(file, 'utf-8'))
+
+  pkg.name = answers.name
+  pkg.description = answers.description
+  pkg.author = answers.author
+
+  fs.writeFileSync(file, JSON.stringify(pkg))
+}
+
+function initConfig (dir, answers) {
+  const file = path.join(dir, 'configs/init.ini')
+  const config = ini.parse(fs.readFileSync(file, 'utf-8'))
+
+  config.type = answers.type
+  config.proxyUser = answers.proxyUser
+  config.serverPort = answers.serverPort
+
+  fs.writeFileSync(file, ini.stringify(config, { section: 'section' }))
 }
