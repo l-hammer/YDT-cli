@@ -51,23 +51,7 @@ const projectName = program.args[0]
 const tmp = './' + projectName
 const to = path.resolve(projectName)
 
-module.exports = () => {
-  inquirer.prompt(prompts).then((answers) => {
-    if (fs.existsSync(to)) {
-      generate(tmp, answers);
-    } else {
-      download(template, tmp, (err) => {
-        if (err) logger.error('Failed to download repo ' + template + ': ' + err)
-        generate(tmp, answers);
-      })
-    }
-  })
-}
-
-function generate(src, answers) {
-  initPackage(src)
-  initConfig(src)
-}
+prompts[0].default = projectName
 
 function initPackage (dir, answers) {
   const file = path.join(dir, 'package.json')
@@ -77,7 +61,7 @@ function initPackage (dir, answers) {
   pkg.description = answers.description
   pkg.author = answers.author
 
-  fs.writeFileSync(file, JSON.stringify(pkg))
+  fs.writeFileSync(file, JSON.stringify(pkg, null, 2))
 }
 
 function initConfig (dir, answers) {
@@ -89,4 +73,30 @@ function initConfig (dir, answers) {
   config.serverPort = answers.serverPort
 
   fs.writeFileSync(file, ini.stringify(config, { section: 'section' }))
+}
+
+function initProject(src, answers) {
+  initPackage(src, answers)
+  initConfig(src, answers)
+}
+
+module.exports = () => {
+  // 是否存在相同(同名)的模板
+  if (fs.existsSync(to)) {
+    inquirer.prompt([{
+      type: 'comfirm',
+      name: 'yes',
+      message: 'Target directory exists. Continue?',
+      default: 'yes'
+    }]).then(answers => {
+      if (answers.yes) initProject(tmp, answers);
+    })
+  } else {
+    inquirer.prompt(prompts).then((answers) => {
+      download(template, tmp, false, (err) => {
+        if (err) logger.error('Failed to download repo ' + template + ': ' + err)
+        initProject(tmp, answers);
+      })
+    })
+  }
 }
