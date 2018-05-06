@@ -5,6 +5,8 @@ const download = require('download-git-repo')
 const inquirer = require('inquirer')
 const fs = require('fs')
 const ini = require('ini')
+const ora = require('ora')
+const chalk = require('chalk')
 
 const prompts = [
   {
@@ -93,7 +95,10 @@ module.exports = () => {
     })
   } else {
     inquirer.prompt(prompts).then((answers) => {
+      const spinner = ora('downloading emplate……')
+      spinner.start()
       download(template, tmp, false, (err) => {
+        spinner.succeed(chalk.green('download successful~'))
         if (err) logger.error('Failed to download repo ' + template + ': ' + err)
         initProject(tmp, answers);
       })
