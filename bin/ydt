@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const package = require('../package')
+
+program
+  .version(package.version)
+  .usage('<command> [options]')
+  .command('init', 'generate a new project from a YDTemplate')
+  .parse(process.argv)
+
+if(!program.args.length){
+  program.help()
+}

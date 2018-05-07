@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const path = require('path')
+const inquirer = require('inquirer')
+const program = require('commander')
+const chalk = require('chalk')
+const home = require('user-home')
+const download = require('download-git-repo')
+const ora = require('ora')
+const rm = require('rimraf').sync
+const logger = require('../lib/logger')
+// const ini = require('ini')
+const generate = require('../lib/generate')
+
+/**
+ * Usage. 配置commander使用方法
+ */
+program
+  .usage('<template-name> [project-name]')
+  .option('--offline', 'use cached template')
+  .parse(process.argv)
+
+/**
+ * Help. 自定义--help指令信息
+ */
+program.on('--help', () => {
+  console.log('\n  Examples:\n')
+  console.log(chalk.gray('    # create a new project with an YDTemplate'))
+  console.log('    $ ydt init YDTemplate my-project \n')
+})
+function help () {
+  program.parse(process.argv)
+  if (program.args.length < 1) return program.help()
+}
+help()
+
+const template = 'l-hammer/' + program.args[0] // 模板
+const rawName = program.args[1] // 项目名称
+const inPlace = !rawName || rawName === '.' // 是否设置项目名称 true -> 未设置 false-> 已设置
+const name = inPlace ? path.relative('../', process.cwd()) : rawName // 最终的项目名称，如果未设置项目名称则采用当前文件夹名称
+const to = path.resolve(rawName || '.')
+const tmp = path.join(home, '.YDTemplates', template.replace(/[\/:]/g, '-'))
+
+// function initPackage (dir, answers) {
+//   const file = path.join(dir, 'package.json')
+//   const pkg = JSON.parse(fs.readFileSync(file, 'utf-8'))
+
+//   pkg.name = answers.name
+//   pkg.description = answers.description
+//   pkg.author = answers.author
+
+//   fs.writeFileSync(file, JSON.stringify(pkg, null, 2))
+// }
+
+// function initConfig (dir, answers) {
+//   const file = path.join(dir, 'configs/init.ini')
+//   const config = ini.parse(fs.readFileSync(file, 'utf-8'))
+
+//   config.type = answers.type
+//   config.proxyUser = answers.proxyUser
+//   config.serverPort = answers.serverPort
+
+//   fs.writeFileSync(file, ini.stringify(config, { section: 'section' }))
+// }
+
+// 是否存在相同(同名)的模板
+if (fs.existsSync(to)) {
+  inquirer.prompt([{
+    type: 'comfirm',
+    name: 'ok',
+    message: inPlace
+      ? 'Generate project in current directory?'
+      : 'Target directory exists. Continue?',
+    default: 'ok'
+  }]).then(answers => {
+    if (answers.ok) {
+      generate(name, tmp, to)
+    }
+  })
+} else {
+  const spinner = ora('downloading emplate……')
+  spinner.start()
+  if (fs.existsSync(tmp)) rm(tmp)
+  download(template, tmp, false, (err) => {
+    if (err) logger.error('Failed to download repo ' + template + ': ' + err)
+    spinner.succeed(chalk.green('download successful~'))
+    generate(name, tmp, to, (err) => {
+      if (err) logger.error(err)
+      logger.success('Generated "%s".', name)
+    })
+  })
+}
+
