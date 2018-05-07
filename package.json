@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "TDTemplate cli",
   "bin": {
-    "ydt": "./bin/index.js"
+    "ydt": "bin/ydt",
+    "ydt-init": "bin/ydt-init"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,6 +28,8 @@
     "inquirer": "^5.2.0",
     "ora": "^2.1.0",
     "read-metadata": "^1.0.0",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "rimraf": "^2.6.2",
+    "user-home": "^2.0.0"
   }
 }
