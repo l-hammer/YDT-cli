@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const path = require('path')
-const inquirer = require('inquirer')
-const program = require('commander')
-const chalk = require('chalk')
-const home = require('user-home')
-const download = require('download-git-repo')
-const ora = require('ora')
-const rm = require('rimraf').sync
+const exists= require('fs').existsSync // node自带的fs模块下的existsSync方法，检测文件是否存在
+const path = require('path') // node自带的路径模块
+const inquirer = require('inquirer') // 交互式命令行
+const program = require('commander') // 命令行处理
+const chalk = require('chalk') // 终端打印信息美化
+const home = require('user-home') // 用于获取用户的根目录
+const download = require('download-git-repo') // 下载远程仓库
+const ora = require('ora') // loading效果
+const rm = require('rimraf').sync // 相当于UNIX的“rm -rf”命令
+const tildify = require('tildify') // 将绝对路径转换成带波浪符的路径
 const logger = require('../lib/logger')
 // const ini = require('ini')
 const generate = require('../lib/generate')
+const localPath = require('../lib/localpath')
 
 /**
  * Usage. 配置commander使用方法
@@ -35,37 +37,22 @@ function help () {
 }
 help()
 
-const template = 'l-hammer/' + program.args[0] // 模板
+let template = program.args[0] // 模板
 const rawName = program.args[1] // 项目名称
 const inPlace = !rawName || rawName === '.' // 是否设置项目名称 true -> 未设置 false-> 已设置
 const name = inPlace ? path.relative('../', process.cwd()) : rawName // 最终的项目名称，如果未设置项目名称则采用当前文件夹名称
 const to = path.resolve(rawName || '.')
-const tmp = path.join(home, '.YDTemplates', template.replace(/[\/:]/g, '-'))
+const tmp = path.join(home, '.YDTemplates', template.replace(/[/:]/g, '-'))
 
-// function initPackage (dir, answers) {
-//   const file = path.join(dir, 'package.json')
-//   const pkg = JSON.parse(fs.readFileSync(file, 'utf-8'))
+if (program.offline) {
+  logger.info(`Use cached template at ${chalk.yellow(tildify(tmp))}`)
+  template = tmp
+}
 
-//   pkg.name = answers.name
-//   pkg.description = answers.description
-//   pkg.author = answers.author
-
-//   fs.writeFileSync(file, JSON.stringify(pkg, null, 2))
-// }
-
-// function initConfig (dir, answers) {
-//   const file = path.join(dir, 'configs/init.ini')
-//   const config = ini.parse(fs.readFileSync(file, 'utf-8'))
-
-//   config.type = answers.type
-//   config.proxyUser = answers.proxyUser
-//   config.serverPort = answers.serverPort
-
-//   fs.writeFileSync(file, ini.stringify(config, { section: 'section' }))
-// }
-
-// 是否存在相同(同名)的模板
-if (fs.existsSync(to)) {
+/**
+ * 未设置rawName时，是否在当前目录generate项目；否则rawName已经存在，是否继续
+ */
+if (inPlace || exists(to)) {
   inquirer.prompt([{
     type: 'comfirm',
     name: 'ok',
@@ -75,20 +62,49 @@ if (fs.existsSync(to)) {
     default: 'ok'
   }]).then(answers => {
     if (answers.ok) {
-      generate(name, tmp, to)
+      run()
     }
-  })
+  }).catch(logger.error)
 } else {
+  run()
+}
+
+/**
+ * Check是否为本地路径，如果是则直接从缓存目录下读取模板，否则download
+ */
+function run () {
+  if (localPath.isLocalPath(template)) {
+    const templatePath = localPath.getTemplatePath(template)
+    
+    if (exists(template)) {
+      generate(name, templatePath, to, err => {
+        if (err) logger.error(err)
+        logger.success('Generated "%s".', name)
+      })
+    } else {
+      logger.error('Local template "%s" not found.', template)
+    }
+  } else {
+    const officialTemplate = 'l-hammer/' + template
+
+    downloadAndGenerate(officialTemplate)
+  }
+}
+
+/**
+ * download and generate the project.
+ */
+function downloadAndGenerate (template) {
   const spinner = ora('downloading emplate……')
+
   spinner.start()
-  if (fs.existsSync(tmp)) rm(tmp)
-  download(template, tmp, false, (err) => {
+  if (exists(tmp)) rm(tmp)
+  download(template, tmp, false, err => {
     if (err) logger.error('Failed to download repo ' + template + ': ' + err)
     spinner.succeed(chalk.green('download successful~'))
-    generate(name, tmp, to, (err) => {
+    generate(name, tmp, to, err => {
       if (err) logger.error(err)
       logger.success('Generated "%s".', name)
     })
   })
 }
-

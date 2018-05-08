@@ -29,6 +29,7 @@
     "ora": "^2.1.0",
     "request": "^2.85.0",
     "rimraf": "^2.6.2",
+    "tildify": "^1.2.0",
     "user-home": "^2.0.0"
   },
   "devDependencies": {
