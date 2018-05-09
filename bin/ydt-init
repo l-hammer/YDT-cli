@@ -21,7 +21,6 @@ const localPath = require('../lib/localpath')
 program
   .usage('<template-name> [project-name]')
   .option('--offline', 'use cached template')
-  .parse(process.argv)
 
 /**
  * Help. 自定义--help指令信息
@@ -45,7 +44,7 @@ const to = path.resolve(rawName || '.')
 const tmp = path.join(home, '.YDTemplates', template.replace(/[/:]/g, '-'))
 
 if (program.offline) {
-  logger.info(`Use cached template at ${chalk.yellow(tildify(tmp))}`)
+  logger.info(`Use cached template at ${chalk.magenta(tildify(tmp))}`)
   template = tmp
 }
 
@@ -75,7 +74,6 @@ if (inPlace || exists(to)) {
 function run () {
   if (localPath.isLocalPath(template)) {
     const templatePath = localPath.getTemplatePath(template)
-    
     if (exists(template)) {
       generate(name, templatePath, to, err => {
         if (err) logger.error(err)
