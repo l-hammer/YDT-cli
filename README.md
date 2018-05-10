@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/u2i8y2jadt0ep6e1/branch/master?svg=true)](https://ci.appveyor.com/project/l-hammer/ydt-cli/branch/master)
 [![npm](https://img.shields.io/npm/v/ydt-cli.svg?style=flat&colorB=brightgreen)](https://www.npmjs.com/package/ydt-cli)
 
-A simple CLI for scaffolding TDTemplate projects.
+A simple CLI for scaffolding YDTemplate projects.
 
 ## Installation
 
@@ -35,7 +35,7 @@ The above command pulls the template from [l-hammer/YDTemplate](https://github.c
 $ ydt init YDTemplate my-project --offline
 ```
 
-The above command pulls the template from local cached template([$HOME](https://www.npmjs.com/package/user-home)/.YDTemplates/TDTemplate), prompts for some information, and generates the project at `./my-project/`.
+The above command pulls the template from local cached template([$HOME](https://www.npmjs.com/package/user-home)/.YDTemplates/YDTemplate), prompts for some information, and generates the project at `./my-project/`.
 
 <div align="center"><img src="static/generatefromcache.jpeg" width="100%" align="center"/></div>
 
