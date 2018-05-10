@@ -94,7 +94,7 @@ function run () {
  */
 function downloadAndGenerate (template) {
   const spinner = ora('downloading emplate……')
-
+  console.log()
   spinner.start()
   if (exists(tmp)) rm(tmp)
   download(template, tmp, false, err => {
