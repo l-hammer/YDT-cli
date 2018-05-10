@@ -37,6 +37,7 @@ function help () {
 help()
 
 let template = program.args[0] // 模板
+const hasSlash = template.indexOf('/') > -1 // 判断是否为官方模板
 const rawName = program.args[1] // 项目名称
 const inPlace = !rawName || rawName === '.' // 是否设置项目名称 true -> 未设置 false-> 已设置
 const name = inPlace ? path.relative('../', process.cwd()) : rawName // 最终的项目名称，如果未设置项目名称则采用当前文件夹名称
@@ -83,9 +84,14 @@ function run () {
       logger.error('Local template "%s" not found.', template)
     }
   } else {
-    const officialTemplate = 'l-hammer/' + template
+    if (!hasSlash) {
+      // 使用“官方”(官方有点大，只是想区分一下别人而已，不要误会)模板
+      const officialTemplate = 'l-hammer/' + template
 
-    downloadAndGenerate(officialTemplate)
+      downloadAndGenerate(officialTemplate)
+    } else {
+      downloadAndGenerate(template)
+    }
   }
 }
 
