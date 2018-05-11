@@ -15,6 +15,9 @@ $ npm install -g ydt-cli
 ## Usage
 
 ```bash
+$ ydt -h
+$ ydt list
+$ ydt init -h
 $ ydt init <template-name> <project-name>
 $ ydt init <template-name> <project-name> --offline
 ```
@@ -22,6 +25,14 @@ $ ydt init <template-name> <project-name> --offline
 <div align="center"><img src="static/command.jpeg" width="100%" align="center"/></div>
 
 #### Example:
+
+```bash
+$ ydt list
+```
+
+list available official templates
+
+<div align="center"><img src="static/templates.jpeg" width="100%" align="center"/></div>
 
 ```bash
 $ ydt init YDTemplate my-project
