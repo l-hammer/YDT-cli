@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+const request = require('request') // 发送http请求
+const Table = require('cli-table') // 终端表格工具
+const logger = require('../lib/logger')
+
+const table = new Table({
+  head: ['name', 'release', 'author', 'description'],
+  style: {
+    head: ['cyan']
+  }
+})
+
+/**
+ * 纯属美化，当退成进程添加一空行
+ */
+process.on('exit', () => {
+  logger.log()
+})
+
+/**
+ * 获取templates
+ */
+request({
+  url: "https://lhammer.cn/configs/ydt-cli-templates.json?v=1",
+  header: {
+    'User-Agent': 'ydt-cli'
+  }
+}, (err, res, body) => {
+  if (err) logger.error(err)
+
+  const requestBody = JSON.parse(body)
+  const templates = requestBody.templates
+
+  if (!requestBody.code && Array.isArray(templates)) {
+    logger.success('Available official templates:\n')
+    templates.forEach(template => {
+      table.push(
+        [template.name, template.release, template.author, template.description]
+      )
+    })
+    logger.log(table.toString())
+  } else {
+    logger.error("Sorry, template info is error, failed to get template list. Please try again~")
+  }
+})
