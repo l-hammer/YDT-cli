@@ -12,13 +12,6 @@ const table = new Table({
 })
 
 /**
- * 纯属美化，当退成进程添加一空行
- */
-process.on('exit', () => {
-  logger.log()
-})
-
-/**
  * 获取templates
  */
 request({

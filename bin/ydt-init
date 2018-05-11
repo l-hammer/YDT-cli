@@ -28,7 +28,7 @@ program
 program.on('--help', () => {
   console.log('\n  Examples:\n')
   console.log(chalk.gray('    # create a new project with an YDTemplate'))
-  console.log('    $ ydt init YDTemplate my-project \n')
+  console.log('    $ ydt init YDTemplate my-project')
 })
 function help () {
   program.parse(process.argv)

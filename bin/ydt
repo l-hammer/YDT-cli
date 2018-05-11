@@ -2,6 +2,14 @@
 
 const program = require('commander')
 const package = require('../package')
+const logger = require('../lib/logger')
+
+/**
+ * 纯属美化，当退成进程添加一空行
+ */
+process.on('exit', () => {
+  logger.log()
+})
 
 program
   .version(package.version)
