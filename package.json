@@ -4,7 +4,8 @@
   "description": "TDTemplate cli",
   "bin": {
     "ydt": "bin/ydt",
-    "ydt-init": "bin/ydt-init"
+    "ydt-init": "bin/ydt-init",
+    "ydt-list": "bin/ydt-list"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +24,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "chalk": "^2.4.1",
+    "cli-table": "^0.3.1",
     "commander": "^2.15.1",
     "consolidate": "^0.15.1",
     "download-git-repo": "^1.0.2",
