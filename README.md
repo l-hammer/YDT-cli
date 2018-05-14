@@ -1,6 +1,7 @@
 # YDT-cli 
 [![Build status](https://ci.appveyor.com/api/projects/status/u2i8y2jadt0ep6e1/branch/master?svg=true)](https://ci.appveyor.com/project/l-hammer/ydt-cli/branch/master)
 [![npm](https://img.shields.io/npm/v/ydt-cli.svg?style=flat&colorB=brightgreen)](https://www.npmjs.com/package/ydt-cli)
+[![Maintainability](https://api.codeclimate.com/v1/badges/068dc24759d97e29a808/maintainability)](https://codeclimate.com/github/l-hammer/YDT-cli/maintainability)
 
 A simple CLI for scaffolding YDTemplate projects.
 
