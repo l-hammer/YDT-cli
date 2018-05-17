@@ -99,7 +99,7 @@ function run () {
  * download and generate the project.
  */
 function downloadAndGenerate (template) {
-  const spinner = ora('downloading emplate……')
+  const spinner = ora('downloading template……')
   console.log()
   spinner.start()
   if (exists(tmp)) rm(tmp)
