@@ -14,6 +14,7 @@ const logger = require('../lib/logger')
 // const ini = require('ini')
 const generate = require('../lib/generate')
 const localPath = require('../lib/localpath')
+const checkVersion = require('../lib/checkversion');
 
 /**
  * Usage. 配置commander使用方法
@@ -84,14 +85,16 @@ function run () {
       logger.error('Local template "%s" not found.', template)
     }
   } else {
-    if (!hasSlash) {
-      // 使用“官方”(官方有点大，只是想区分一下别人而已，不要误会)模板
-      const officialTemplate = 'l-hammer/' + template
-
-      downloadAndGenerate(officialTemplate)
-    } else {
-      downloadAndGenerate(template)
-    }
+    checkVersion(() => {
+      if (!hasSlash) {
+        // 使用“官方”(官方有点大，只是想区分一下别人而已，不要误会)模板
+        const officialTemplate = 'l-hammer/' + template
+  
+        downloadAndGenerate(officialTemplate)
+      } else {
+        downloadAndGenerate(template)
+      }
+    })
   }
 }
 
