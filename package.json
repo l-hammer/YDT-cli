@@ -35,7 +35,7 @@
     "minimatch": "^3.0.4",
     "multimatch": "^2.1.0",
     "ora": "^2.1.0",
-    "request": "^2.85.0",
+    "request": "^2.87.0",
     "rimraf": "^2.6.2",
     "semver": "^5.5.0",
     "tildify": "^1.2.0",
