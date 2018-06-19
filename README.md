@@ -3,6 +3,7 @@
     <p align="center">
         <a href="https://ci.appveyor.com/project/l-hammer/ydt-cli/branch/master" target="_blank"><img src="https://ci.appveyor.com/api/projects/status/u2i8y2jadt0ep6e1/branch/master?svg=true"></a>
         <a href="https://www.npmjs.com/package/ydt-cli"><img src="https://img.shields.io/npm/v/ydt-cli.svg?style=flat&colorB=brightgreen"></a>
+        <img src="https://img.shields.io/npm/dt/ydt-cli.svg">
         <a href="https://codeclimate.com/github/l-hammer/YDT-cli/maintainability"><img src="https://api.codeclimate.com/v1/badges/068dc24759d97e29a808/maintainability"></a>
     </p>
     <p align="center">
